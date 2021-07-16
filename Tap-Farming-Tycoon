@@ -1,0 +1,212 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Maxgat5/UiLib/main/lua')))()
+local w = library:CreateWindow("Tap Farm Tycoon")
+local b = w:CreateFolder("AutoFarm")
+local c = w:CreateFolder("Teleport")
+local e = w:CreateFolder("Mix")
+local u = w:CreateFolder("Credits")
+
+SelectedSeeds = "Carrot"
+Seeds = {}
+for i,v in pairs(game:GetService("ReplicatedStorage").ClientModels.Crops:GetChildren()) do
+    if not table.find(Seeds,v.Name) then
+        table.insert(Seeds,v.Name)
+    end
+end
+
+b:Button("Auto Claim Plot",function()
+    for i,v in pairs(game:GetService("Workspace").Plots:GetDescendants()) do
+        if v.ClassName == "TextLabel" then
+            if v.Text == "Nobody's Farmland" then
+                if v.Parent.Parent.Parent.Parent.Position == Vector3.new(208, -9.5, 216) then
+                    workspace.GlobalEvents.BuyPlot:FireServer(v.Parent.Parent.Parent.Parent)
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(-240, -9.5, -56) then
+                    workspace.GlobalEvents.BuyPlot:FireServer(v.Parent.Parent.Parent.Parent)
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(252, -9.5, -88) then
+                    workspace.GlobalEvents.BuyPlot:FireServer(v.Parent.Parent.Parent.Parent)
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(176, -9.5, -344) then
+                    workspace.GlobalEvents.BuyPlot:FireServer(v.Parent.Parent.Parent.Parent)
+                end
+            end
+        end
+    end
+end)
+
+b:Dropdown("Select Seed",Seeds,true,function(mob)
+    SelectedSeeds = mob
+end)
+
+b:Toggle("AutoPlant",function(bool)
+    shared.toggle = bool
+    AutoPlant = bool
+end)
+
+b:Toggle("AutoTransplant",function(bool)
+    shared.toggle = bool
+    AutoTransplant = bool
+end)
+
+b:Toggle("Rebirth",function(bool)
+    shared.toggle = bool
+    AutoRebirth = bool
+end)
+
+b:Toggle("BuyAscensions",function(bool)
+    shared.toggle = bool
+    AutoAscensions = bool
+end)
+
+b:Button("RIP Popups",function()
+    if game:GetService("ReplicatedStorage").ClientModels.ParticleEffects.PopupSign then
+        game:GetService("ReplicatedStorage").ClientModels.ParticleEffects.PopupSign:Destroy()
+    end
+end)
+
+e:Toggle("AntiAfk",function(bool)
+    shared.toggle = bool
+    AntiAfk = bool
+end)
+
+c:Button("Tp Plot",function()
+    for i,v in pairs(game:GetService("Workspace").Plots:GetDescendants()) do
+        if v.ClassName == "TextLabel" then
+            if v.Text == game.Players.LocalPlayer.Name.."'s Farmland" then
+                if v.Parent.Parent.Parent.Parent.Position == Vector3.new(208, -9.5, 216) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.Parent.Parent.Parent.CFrame.Position + Vector3.new(0,20,0))
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(-240, -9.5, -56) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.Parent.Parent.Parent.CFrame.Position + Vector3.new(0,20,0))
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(252, -9.5, -88) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.Parent.Parent.Parent.CFrame.Position + Vector3.new(0,20,0))
+                elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(176, -9.5, -344) then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Parent.Parent.Parent.Parent.CFrame.Position + Vector3.new(0,20,0))
+                end
+            end
+        end
+    end
+end)
+
+c:Button("TP SeedShop",function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Workspace").EnterSeeds.CFrame.Position)
+end)
+
+c:Button("TP HardwareShop",function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Workspace").EnterHardware.CFrame.Position)
+end)
+
+--Credits
+u:Button("Moepi#1149",function()
+    setclipboard("Moepi#1149")
+end)
+
+u:Button("maxgat5#8395",function()
+    setclipboard("maxgat5#8395")
+end)
+
+u:Button("Discrod Server",function()
+    setclipboard("https://discord.gg/K4txdRSVfq")
+end)
+
+game:GetService('RunService').Stepped:connect(function()
+    if AntiAfk == true then
+        local bb=game:service'VirtualUser'
+        bb:CaptureController()
+        bb:ClickButton2(Vector2.new())
+    end
+end)
+
+game.RunService.Heartbeat:connect(function()
+
+    local PlyrMoney = game:GetService("Players").LocalPlayer.Leaderstats.Money.Value
+    local SeedCost = game:GetService("ReplicatedStorage").ClientModels.Crops[SelectedSeeds].PlantData.Cost.Value
+
+    spawn(function()
+        if AutoPlant == true then
+            for i,v in pairs(game:GetService("Workspace").Plots:GetDescendants()) do
+                if not AutoPlant then break end
+                if v.ClassName == "TextLabel" then
+                    if v.Text == game.Players.LocalPlayer.Name.."'s Farmland" then
+                        if v.Parent.Parent.Parent.Parent.Position == Vector3.new(-240, -9.5, -56) then
+                            for i1 = -24, -22, 1 do
+                                if SeedCost <= PlyrMoney then
+                                    workspace.GlobalEvents.Plant:FireServer({SelectedSeeds,-70,i1})
+                                elseif PlyrMoney < SeedCost then
+                                    workspace.GlobalEvents.Plant:FireServer({"Carrot",-70,i1})
+                                end
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(208, -9.5, 216) then
+                            for i1 = 44, 45, 1 do
+                                if SeedCost <= PlyrMoney then
+                                    workspace.GlobalEvents.Plant:FireServer({SelectedSeeds,42,i1})
+                                elseif PlyrMoney < SeedCost then
+                                    workspace.GlobalEvents.Plant:FireServer({"Carrot",42,i1})
+                            end
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(252, -9.5, -88) then
+                            for i1 = -32, -30, 1 do
+                                if SeedCost <= PlyrMoney then
+                                    workspace.GlobalEvents.Plant:FireServer({SelectedSeeds,53,i1})
+                                elseif PlyrMoney < SeedCost then
+                                    workspace.GlobalEvents.Plant:FireServer({"Carrot",53,i1})
+                                end
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(176, -9.5, -344) then
+                            for i1 = 34, 36, 1 do
+                                if SeedCost <= PlyrMoney then
+                                    workspace.GlobalEvents.Plant:FireServer({SelectedSeeds,i1,-77})
+                                elseif PlyrMoney < SeedCost then
+                                    workspace.GlobalEvents.Plant:FireServer({"Carrot",i1,-77})
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
+
+    spawn(function()
+        if AutoTransplant == true then
+            for i,v in pairs(game:GetService("Workspace").Plots:GetDescendants()) do
+                if not AutoTransplant then break end
+                if v.ClassName == "TextLabel" then
+                    if v.Text == game.Players.LocalPlayer.Name.."'s Farmland" then
+                        if v.Parent.Parent.Parent.Parent.Position == Vector3.new(-240, -9.5, -56) then
+                            for i1 = -24, -22, 1 do
+                                workspace.GlobalEvents.InteractTile:FireServer({-70,i1})
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(208, -9.5, 216) then
+                            for i1 = 44, 45, 1 do
+                                workspace.GlobalEvents.InteractTile:FireServer({42,i1})
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(252, -9.5, -88) then
+                            for i1 = -32, -30, 1 do
+                                workspace.GlobalEvents.InteractTile:FireServer({53,i1})
+                            end
+                        elseif v.Parent.Parent.Parent.Parent.Position == Vector3.new(176, -9.5, -344) then
+                            for i1 = 34, 36, 1 do
+                                workspace.GlobalEvents.InteractTile:FireServer({i1,-77})
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
+    if AutoRebirth == true then
+        workspace.GlobalEvents.Rebirth:FireServer()
+        wait(1)
+    end
+
+    if AutoAscensions == true then
+        for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.MoneyGui.RebirthCatalog.Scroll:GetDescendants()) do
+            if not AutoAscensions then break end
+            if v.Name == "TB" and v.Text ~= "Bought" then
+                if v.Text <= tostring(game:GetService("Players").LocalPlayer.Leaderstats.RebirthCoins.Value) then
+                    workspace.GlobalEvents.BuyRebirth:FireServer(v.Parent.Parent.ObjectName.TL.Text)
+                    wait()
+                end
+            end
+        end
+    end
+end)
